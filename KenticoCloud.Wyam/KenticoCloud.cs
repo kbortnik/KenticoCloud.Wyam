@@ -34,6 +34,17 @@ namespace KenticoCloud.Wyam
         }
 
         /// <summary>
+        /// Specifies the project ID to use for retrieving content items from Kentico Cloud,
+        /// as well as the Preview API key. This ensures that unpublished content is retrieved.
+        /// </summary>
+        /// <param name="projectId">Kentico Cloud project ID</param>
+        /// <param name="previewApiKey">Preview API key</param>
+        public KenticoCloud(string projectId, string previewApiKey) : this()
+        {
+            _client = new DeliveryClient(projectId, previewApiKey);
+        }
+
+        /// <summary>
         /// Sets the content type to retrieve.
         /// </summary>
         /// <param name="contentType">Code name of the content type to retrieve.</param>
@@ -67,7 +78,6 @@ namespace KenticoCloud.Wyam
             return this;
         }
 
-        /// <inheritdoc />
         public IEnumerable<IDocument> Execute(IReadOnlyList<IDocument> inputs, IExecutionContext context)
         {
             var items = _client.GetItemsAsync(QueryParameters).Result;

@@ -8,11 +8,19 @@ using Wyam.Common.Modules;
 namespace KenticoCloud.Wyam
 {
     /// <summary>
-    /// Parses document content by replacing <c>!!assets/</c> paths with Kentico Cloud asset URLs.
+    /// Parses document content by replacing <c>!!local-assets/</c> paths with URLs to downloaded assets.
     /// URLs are matched by the file name of the asset.
     /// </summary>
-    public class KenticoCloudAssetParser : IModule
+    public class KenticoCloudLocalAssetParser : IModule
     {
+        private string _folderPath = string.Empty;
+
+        public KenticoCloudLocalAssetParser WithFolderPath(string folderPath)
+        {
+            _folderPath = folderPath + "/";
+            return this;
+        }
+
         public IEnumerable<IDocument> Execute(IReadOnlyList<IDocument> inputs, IExecutionContext context)
         {
             foreach (var doc in inputs)
@@ -29,7 +37,7 @@ namespace KenticoCloud.Wyam
 
                         foreach (var image in asset)
                         {
-                            content = content.Replace($"!!assets/{image.Name}", image.Url);
+                            content = content.Replace($"!!local-assets/{image.Name}", $"/{_folderPath}{KenticoCloudAssetHelper.GetAssetFileName(image.Url)}");
                         }
                     }
 
